@@ -1,7 +1,7 @@
 import cv2
 
-configPath = 'person_detection_models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
-weightsPath = 'person_detection_models/frozen_inference_graph.pb'
+configPath = 'object_detection_models/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt'
+weightsPath = 'object_detection_models/frozen_inference_graph.pb'
 
 net = cv2.dnn_DetectionModel(weightsPath,configPath)
 net.setInputSize(320,320)
@@ -11,7 +11,6 @@ net.setInputSwapRB(True)
 
 
 def detect_object_from_input(image,id=1):
-
     classIds, confs, bbox = net.detect(image,confThreshold=0.6)
 
     leftt = topp = rightt = bottomm = 0
@@ -34,5 +33,11 @@ def detect_object_from_input(image,id=1):
     return image,person_found, (topp,bottomm,leftt,rightt)
 
 
-#By default id is set to 1 (person), you can change it to detect other obects too
-detect_object_from_input('IMAGE_PATH')
+cap = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+
+while True:
+    ret,frame = cap.read()
+
+    frame,_,_ = detect_object_from_input(frame)
+    cv2.imshow('output',frame)
+    cv2.waitKey(1)
